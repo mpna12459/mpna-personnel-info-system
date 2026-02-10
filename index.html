@@ -1,41 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>测试Supabase RPC</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-</head>
+<head><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
 <body>
-    <h2>测试 RPC 函数</h2>
-    <button onclick="testRpc()">点击测试</button>
-    <pre id="output">结果将显示在这里...</pre>
+    <h2>输入字符串:</h2>
+    <input type="text" id="input" value="测试">
+    <button onclick="run()">发送</button>
+    <pre id="output"></pre>
     
     <script>
-        // ⚠️ 直接在这里填写你的配置 ⚠️
-        const SUPABASE_URL = 'https://dpaltfyvquazwxcwylwm.supabase.co';
-        const ANON_KEY = 'sb_publishable_h6RPugXK2sWtCOMeSR9qdA_AaeihNuj';
-        const FUNCTION_NAME = 'lookup_members';
-        const payload = { info: input };
+        const supabase = window.supabase.createClient(
+            'https://dpaltfyvquazwxcwylwm.supabase.co',
+            'sb_publishable_h6RPugXK2sWtCOMeSR9qdA_AaeihNuj'
+        );
         
-        async function testRpc() {
-            const output = document.getElementById('output');
-            output.textContent = '正在调用...';
+        async function run() {
+            const text = document.getElementById('input').value;
+            const { data, error } = await supabase.rpc('lookup_members', { 
+                info: input
+            });
             
-            try {
-                const supabase = window.supabase.createClient(SUPABASE_URL, ANON_KEY);
-                const { data, error } = await supabase.rpc(FUNCTION_NAME, payload);
-                
-                if (error) throw error;
-                
-                output.textContent = JSON.stringify(data, null, 2);
-                console.log('成功:', data);
-                
-            } catch (error) {
-                output.textContent = `错误: ${error.message}`;
-                console.error('失败:', error);
-            }
+            document.getElementById('output').textContent = 
+                error ? '错误: ' + error.message : JSON.stringify(data, null, 2);
         }
-        
-        console.log('配置:', { SUPABASE_URL, FUNCTION_NAME });
     </script>
 </body>
 </html>
