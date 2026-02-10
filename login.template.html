@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body>
+  <h1>Login</h1>
+  <input id="email" type="email" placeholder="you@example.com" />
+  <button id="magic">Send magic link</button>
+  <div id="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = '__SUPABASE_URL__'
+    const SUPABASE_ANON = '__SUPABASE_ANON__'
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+    document.getElementById('magic').onclick = async () => {
+      const email = document.getElementById('email').value.trim()
+      if (!email) { alert('请输入邮箱'); return }
+      document.getElementById('status').textContent = 'Sending…'
+      await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/index.html' } })
+      document.getElementById('status').textContent = '已发送，请检查邮箱'
+    }
+  </script>
+</body>
+</html>
